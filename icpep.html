@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ICPEP.SE PhotoBooth</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--n:#0A1931;--b:#E2E8F0;--m:#64748B;--bg:#F8FAFC;--g:#F59E0B}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font:14px/1.5 Inter,system-ui,sans-serif;color:#0F172A;background:#fff;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,.hd{font-family:'Plus Jakarta Sans',system-ui,sans-serif;letter-spacing:-.02em;color:var(--n);margin:0}
+header{height:64px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;background:#fff;z-index:5}
+.brand{display:flex;align-items:center;gap:12px;cursor:pointer}.logo{height:44px;width:auto;object-fit:contain}.drop{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:24px;border:2px dashed rgba(10,25,49,.4);border-radius:12px;background:var(--bg);cursor:pointer;margin-bottom:14px}.drop:hover,.drop.over{border-color:var(--n);background:#EFF4FF}
+.brand b{font:800 18px 'Plus Jakarta Sans';color:var(--n);display:block;line-height:1}.brand small{font-size:10px;letter-spacing:.06em;color:var(--m);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid var(--n);background:var(--n);color:#fff;font:600 14px Inter;cursor:pointer;transition:.15s}
+.btn:hover{opacity:.9}.btn:active{transform:scale(.97)}.btn:disabled{opacity:.4;pointer-events:none}
+.btn.s{background:#fff;color:var(--n);border-color:var(--b)}.btn.s:hover{border-color:var(--n)}.btn.sm{min-height:34px;padding:0 14px;font-size:12px}
+.view{flex:1;padding:24px 16px;display:flex;flex-direction:column;align-items:center}
+.card{background:#fff;border:1px solid var(--b);border-radius:16px;padding:32px;box-shadow:0 2px 8px -2px rgba(10,25,49,.06)}
+.center{text-align:center}.mut{color:var(--m)}.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+.opt{flex:1;min-width:170px;background:var(--bg);color:var(--m);border-color:var(--b)}.opt.on{background:var(--n);color:#fff;border-color:var(--n)}
+.chip{padding:7px 14px;border-radius:999px;border:1px solid var(--b);background:var(--bg);color:var(--m);font:600 12px Inter;cursor:pointer;white-space:nowrap}.chip.on{background:var(--n);color:#fff;border-color:var(--n)}
+.stage{display:flex;gap:20px;width:100%;max-width:1100px;align-items:flex-start}
+.side{width:170px;flex-shrink:0;padding:14px}.main{flex:1;min-width:0;padding:16px}
+.cam{position:relative;background:#0b1220;border-radius:8px;overflow:hidden;aspect-ratio:4/3;border:1.5px solid var(--n)}
+.cam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.cam i{position:absolute;width:26px;height:26px;border:2px solid #fff;opacity:.8}.cam i:nth-of-type(1){top:12px;left:12px;border-right:0;border-bottom:0}.cam i:nth-of-type(2){top:12px;right:12px;border-left:0;border-bottom:0}.cam i:nth-of-type(3){bottom:12px;left:12px;border-right:0;border-top:0}.cam i:nth-of-type(4){bottom:12px;right:12px;border-left:0;border-top:0}
+#cd{position:absolute;inset:0;display:grid;place-items:center;font:800 120px 'Plus Jakarta Sans';color:var(--g);text-shadow:0 2px 12px rgba(0,0,0,.5);pointer-events:none}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .15s}
+#camerr{position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;color:#fff;text-align:center;padding:20px;background:#0b1220}
+.shutter{width:72px;height:72px;border-radius:50%;border:4px solid var(--n);background:#fff;box-shadow:inset 0 0 0 5px #fff,inset 0 0 0 40px var(--n);cursor:pointer}.shutter:active{transform:scale(.93)}.shutter:disabled{opacity:.4}
+.slots{display:grid;gap:8px;margin:10px 0}.slot{aspect-ratio:4/3;border:1px dashed #CBD5E1;border-radius:6px;background:var(--bg);overflow:hidden;display:grid;place-items:center;color:var(--m);font:600 11px Inter}
+.slot.cur{border:2px solid var(--n);color:var(--n)}.slot img{width:100%;height:100%;object-fit:cover}
+.strip{max-width:100%;height:auto;max-height:68vh;border:1px solid var(--b);box-shadow:0 8px 24px -8px rgba(10,25,49,.25);background:#fff}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;width:100%;max-width:1100px}
+.gal .card{padding:10px;display:flex;flex-direction:column;gap:8px}.gal img{width:100%;border:1px solid var(--b)}
+#toast{position:fixed;top:76px;left:50%;transform:translate(-50%,-10px);background:var(--n);color:#fff;padding:10px 20px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-weight:600}#toast.on{opacity:1;transform:translate(-50%,0)}
+#done{position:fixed;inset:0;background:rgba(10,25,49,.6);display:grid;place-items:center;z-index:30}
+input[type=email]{min-height:44px;padding:0 14px;border:1px solid var(--b);border-radius:10px;font:14px Inter;flex:1;min-width:200px}input:focus{outline:0;border-color:var(--n)}
+#printimg{display:none}
+@media print{@page{margin:0}body>*:not(#printimg){display:none!important}#printimg{display:block;max-height:100vh;max-width:100%;width:auto;margin:0 auto}}
+@media(max-width:800px){.stage{flex-direction:column}.side{width:100%}.slots{grid-template-columns:repeat(3,1fr)}}
+</style></head><body>
+<header><div class="brand" onclick="go('home')"><img class="logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX6IKZE7P8eerGZNi4Cabu2P9aQjW-nH0rwxh6USMACMPB21yrzjBuwBRZLX-8r5WFGGr2fxDOQffeXO06kfjuF6VRJwuhAlCseRhOKE9VjAl8HKN5kr70G835I31zaK6bLED3Oyb05-Oo5RxR3YuF9IYx6T7_qByurWJCb8Uc6ay48q4V4roUaIBE9PVQCU9q45fGAIRgDjE1HFP6V3l4OXH-xASPE10_xhgjQiRZr11EoAFdOzsybXahgtBfIsG7LgY" alt="ICPEP.SE Logo" onerror="this.style.display='none'"><div><b>ICPEP.SE</b><small>UM-DAVAO CHAPTER</small></div></div>
+<button class="btn s sm" onclick="go('gallery')">📷 Gallery</button></header>
+
+<!-- HOME -->
+<main class="view" id="v-home" style="justify-content:center"><div class="card center" style="max-width:560px;width:100%;padding:48px 32px">
+<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuMSGXjw5_lFM83uUPsqJxibxlsvSnqPnXKzKgyUIVIvwbI2apJncbXJq51auKZf9bU5jeaOGWlBhqt25FskmNB8BGI92lR971sTuZJT7sUI6tzoD8txInMRBU_GAFZG7SdBfHafWZK3hY2IKj0WJ6lYbFSHVkZndex26yOWKLxjllxsHZMAhPFhwhqEMwnI0RESIMDbHnYMCwgeZIghr4VWw8lcs9uA9SYE6_QehosVdruzzARM28RxgECzQgSiZ3-88" alt="ICPEP.SE Logo" style="max-height:96px;max-width:200px;object-fit:contain;margin-bottom:12px" onerror="this.style.display='none'"><h1 style="font-size:30px;font-weight:800">ICPEP.SE PhotoBooth</h1><p class="mut">Instant campus photo strips &amp; digital keepsakes.</p>
+<p class="mut" style="font:600 11px Inter;letter-spacing:.06em;text-transform:uppercase;margin-top:28px">Select a layout to begin</p>
+<div class="row"><button class="btn opt on" data-n="3">▮ 3-Shot Strip</button><button class="btn opt" data-n="6">▦ 6-Shot Grid</button></div>
+<p class="mut" style="font-size:12px">Upload your pictures and the booth auto-crops and arranges them into the frame. Press <b>Space</b> to start.</p>
+<button class="btn" style="width:100%;max-width:360px;margin-top:16px" id="start">⬆ Upload Photos (Auto-Templater)</button><button class="btn s" style="width:100%;max-width:360px;margin-top:10px" id="startcam">📸 Use Camera Instead</button></div></main>
+
+<!-- UPLOAD / AUTO-TEMPLATER -->
+<main class="view" id="v-upload" hidden><div class="stage">
+<aside class="card side"><div class="center"><div class="mut" style="font:600 10px Inter;letter-spacing:.06em">LAYOUT</div><div class="hd" style="font-size:15px" id="ulay"></div><div id="uprog" style="font-size:11px;color:#059669;font-weight:600"></div></div>
+<div class="slots" id="uslots"></div><button class="btn s sm" style="width:100%" id="uclear">🗑 Clear slots</button></aside>
+<section class="card main"><label class="drop" id="drop"><div style="font-size:36px">☁️</div><h2 style="font-size:18px">Drag &amp; drop photos here</h2><p class="mut" style="margin:0;font-size:12px">JPG or PNG. Auto-arranged and cropped into the strip frame.</p><span class="btn" id="ubtn">Batch Upload Photos</span><input type="file" id="up2" accept="image/*" multiple hidden></label>
+<div class="row" style="margin-bottom:14px"><span class="mut" style="font-weight:600">Retro filter:</span><span class="row" id="ufilters"></span></div>
+<div class="row" style="justify-content:space-between"><span class="mut" id="ustat"></span><button class="btn" id="gen" disabled>Generate Photostrip →</button></div></section></div></main>
+
+<!-- CAMERA -->
+<main class="view" id="v-camera" hidden><div class="stage">
+<aside class="card side"><div class="center"><div class="mut" style="font:600 10px Inter;letter-spacing:.06em">LAYOUT</div><div class="hd" style="font-size:15px" id="lay"></div><div id="prog" style="font-size:11px;color:#059669;font-weight:600"></div></div>
+<div class="slots" id="slots"></div>
+<button class="btn s sm" style="width:100%" id="undo">↶ Undo last</button><button class="btn s sm" style="width:100%;margin-top:6px" id="clear">🗑 Clear all</button></aside>
+<section class="card main"><div class="cam"><video id="vid" autoplay playsinline muted></video><i></i><i></i><i></i><i></i><div id="cd" hidden></div><div id="flash"></div>
+<div id="camerr" hidden><b>Camera unavailable</b><span style="font-size:12px;opacity:.8">Allow camera access (needs https or localhost), or upload photos instead.</span></div></div>
+<div class="row" style="margin:14px 0" id="filters"></div>
+<div class="row" style="justify-content:space-between"><label class="btn s">⬆ Upload photos<input type="file" id="up" accept="image/*" multiple hidden></label>
+<button class="shutter" id="shutter" title="Capture (Space)"></button><span class="mut" id="stat" style="min-width:140px;text-align:right"></span></div></section></div></main>
+
+<!-- REVIEW -->
+<main class="view" id="v-review" hidden style="gap:16px"><div class="center"><h2 style="font-size:26px">Your Photostrip Preview</h2><p class="mut" style="margin:4px 0 0">Pick a filter, then download, print or share.</p></div>
+<div class="row" id="rfilters"></div><canvas id="strip" class="strip"></canvas>
+<div class="row"><button class="btn s" onclick="retake()">↻ Change Photos</button><button class="btn" id="dl">⬇ Download</button><button class="btn" id="pr">🖨 Print Strip</button><button class="btn s" id="sh">↗ Share</button></div>
+<form class="card row" id="mail" style="width:100%;max-width:520px;padding:16px"><input type="email" required placeholder="your Gmail, e.g. name@gmail.com"><button class="btn">✉ Send to my Gmail</button></form>
+<button class="btn" id="finish">Finish &amp; Next Customer →</button><span class="mut" style="font-size:11px">☁ Auto-archives to <b>z.abonales.568246@umindanao.edu.ph</b></span></main>
+
+<!-- GALLERY -->
+<main class="view" id="v-gallery" hidden><div class="row" style="width:100%;max-width:1100px;justify-content:space-between;margin-bottom:16px"><h2 style="font-size:26px">Gallery</h2><div class="row"><button class="btn s sm" id="clrg">Delete all</button><button class="btn sm" onclick="go('home')">New session</button></div></div>
+<div class="gal" id="gal"></div><p class="mut" id="galempty" hidden>No strips yet — take your first photo!</p></main>
+
+<div id="done" hidden><div class="card center" style="max-width:380px"><div style="font-size:36px">✅</div><h2>Photostrip Saved</h2><p class="mut" id="donep"></p><p class="mut" style="font-size:12px">Booth reset • Ready for next customer</p></div></div>
+<div id="toast"></div><img id="printimg" alt="">
+
+<script>
+const $=s=>document.querySelector(s),wait=ms=>new Promise(r=>setTimeout(r,ms));
+const FILTERS={'Natural':'none','Pinoy 90s Warm':'sepia(.25) saturate(1.3) contrast(1.05) hue-rotate(-10deg) brightness(1.05)','Vintage Komiks':'contrast(1.25) saturate(1.45) brightness(.95) sepia(.15)','Retro Sepia':'sepia(.75) contrast(1.1) brightness(.9)','Classic Mono':'grayscale(1) contrast(1.2) brightness(.95)'};
+const MAIL_ENDPOINT='https://script.google.com/macros/s/AKfycbzghq3mTDHjP49LXoRPTRE1c4p0O_T7oaQks1G8F9sGIwKRQgkLhsXFy103zvPy71A7/exec',MAIL_KEY='pogi',ARCHIVE='z.abonales.568246@umindanao.edu.ph'; // see setup steps
+const S={mode:'up',n:3,filter:'Natural',shots:[],stream:null,busy:false,cancel:false,id:null};
+
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2800)}
+function go(v){if(location.hash==='#'+v)route();else location.hash=v}
+function route(){let v=location.hash.slice(1)||'home';if(v==='review'&&S.shots.length<S.n)v='home';if(v==='upload')renderSlots();
+ document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!=='v-'+v);
+ v==='camera'?startCam():stopCam();if(v==='review')compose();if(v==='gallery')loadGallery()}
+addEventListener('hashchange',route);
+
+/* filters UI */
+function chips(el,onPick){el.innerHTML='';for(const k in FILTERS){const b=document.createElement('button');b.className='chip'+(k===S.filter?' on':'');b.textContent=k;b.onclick=()=>{S.filter=k;document.querySelectorAll('#filters,#rfilters,#ufilters').forEach(c=>[...c.children].forEach(x=>x.classList.toggle('on',x.textContent===k)));$('#vid').style.filter=FILTERS[k]==='none'?'':FILTERS[k];renderSlots();onPick&&onPick()};el.append(b)}}
+chips($('#filters'));chips($('#rfilters'),()=>compose());chips($('#ufilters'));
+
+/* home */
+document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{S.n=+b.dataset.n;document.querySelectorAll('.opt').forEach(x=>x.classList.toggle('on',x===b))});
+function begin(m){S.mode=m||'up';S.shots=[];S.id='s'+Date.now();go(S.mode==='cam'?'camera':'upload')}
+$('#start').onclick=()=>begin('up');$('#startcam').onclick=()=>begin('cam');
+
+/* camera */
+async function startCam(){renderSlots();if(S.stream)return;
+ try{S.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:960}},audio:false});$('#vid').srcObject=S.stream;$('#camerr').hidden=true}
+ catch(e){$('#camerr').hidden=false}}
+function stopCam(){S.cancel=true;if(S.stream){S.stream.getTracks().forEach(t=>t.stop());S.stream=null}}
+function crop(src,w,h,mirror){const c=document.createElement('canvas');c.width=1080;c.height=810;const x=c.getContext('2d');
+ const r=Math.max(1080/w,810/h),sw=1080/r,sh=810/r;if(mirror){x.translate(1080,0);x.scale(-1,1)}
+ x.drawImage(src,(w-sw)/2,(h-sh)/2,sw,sh,0,0,1080,810);return c.toDataURL('image/jpeg',.92)}
+async function snap(){if(S.busy||S.shots.length>=S.n)return;const v=$('#vid');if(!S.stream||!v.videoWidth){toast('Camera not ready — try uploading photos');return}
+ S.busy=true;S.cancel=false;$('#shutter').disabled=true;const cd=$('#cd');
+ for(let i=3;i>0&&!S.cancel;i--){cd.textContent=i;cd.hidden=false;await wait(1000)}
+ cd.hidden=true;$('#shutter').disabled=false;S.busy=false;if(S.cancel)return;
+ const f=$('#flash');f.style.opacity=.9;setTimeout(()=>f.style.opacity=0,150);
+ S.shots.push(crop(v,v.videoWidth,v.videoHeight,true));renderSlots();finishCheck()}
+function finishCheck(){if(S.shots.length>=S.n)setTimeout(()=>{if(S.shots.length>=S.n&&['#camera','#upload'].includes(location.hash))go('review')},700)}
+$('#shutter').onclick=snap;
+$('#undo').onclick=()=>{if(!S.busy){S.shots.pop();renderSlots()}};
+$('#clear').onclick=()=>{if(!S.busy){S.shots=[];renderSlots()}};
+function addFiles(list){const files=[...list].filter(f=>f.type.startsWith('image/')).slice(0,S.n-S.shots.length);let p=Promise.resolve();
+ files.forEach(f=>p=p.then(()=>new Promise(res=>{const im=new Image();im.onload=()=>{S.shots.push(crop(im,im.width,im.height,false));URL.revokeObjectURL(im.src);res()};im.onerror=res;im.src=URL.createObjectURL(f)})));
+ p.then(()=>{renderSlots();finishCheck()})}
+$('#up').onchange=$('#up2').onchange=e=>{addFiles(e.target.files);e.target.value=''};
+const dz=$('#drop');['dragover','dragenter'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('over')}));['dragleave','drop'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove('over')}));dz.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+$('#uclear').onclick=()=>{S.shots=[];renderSlots()};
+$('#gen').onclick=()=>{if(!S.shots.length)return;const base=S.shots.slice();for(let i=0;S.shots.length<S.n;i++)S.shots.push(base[i%base.length]);go('review')};
+function renderSlots(){const n=S.n,k=S.shots.length;const html=Array.from({length:n},(_,i)=>`<div class="slot${i===k?' cur':''}">${S.shots[i]?`<img src="${S.shots[i]}" style="filter:${FILTERS[S.filter]}">`:String(i+1).padStart(2,'0')}</div>`).join('');
+ ['#slots','#uslots'].forEach(q=>{const el=$(q);el.style.gridTemplateColumns=n===6?'1fr 1fr':'1fr';el.innerHTML=html});
+ $('#ulay').textContent=n===3?'3-Photo Strip':'6-Photo Grid';$('#uprog').textContent=`${k} / ${n} staged`;$('#ustat').textContent=k?`${k} photo${k>1?'s':''} staged${k<n?' — extras auto-fill the frame':' ✓'}`:'No photos yet';$('#gen').disabled=!k;$('#ubtn').textContent=`Batch Upload ${n} Photos`;
+ $('#lay').textContent=n===3?'3-Photo Strip':'6-Photo Grid';$('#prog').textContent=`${k} / ${n} captured`;
+ $('#stat').textContent=k>=n?'All captured ✓':`Photo ${k+1} of ${n} • Space to snap`;$('#shutter').disabled=k>=n||S.busy;$('#up').parentElement.style.display=k>=n?'none':''}
+
+/* compose strip */
+const load=src=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=src});
+async function compose(){await (document.fonts?document.fonts.ready:0);const imgs=await Promise.all(S.shots.map(load));
+ const W=1200,P=60,G=40,six=S.n===6,pw=six?(W-2*P-G)/2:W-2*P,ph=pw*.75,F=200,H=P+3*ph+2*G+F;
+ const c=$('#strip'),x=c.getContext('2d');c.width=W;c.height=H;x.fillStyle='#fff';x.fillRect(0,0,W,H);
+ imgs.forEach((im,i)=>{x.save();x.filter=FILTERS[S.filter];x.drawImage(im,P+(six?i%2:0)*(pw+G),P+(six?i>>1:i)*(ph+G),pw,ph);x.restore()});
+ x.textAlign='center';x.fillStyle='#64748B';x.font='400 30px Inter,sans-serif';x.fillText('Softly captured by',W/2,H-F+75);
+ x.fillStyle='#0A1931';x.font='800 48px "Plus Jakarta Sans",sans-serif';x.fillText('ICPEP.SE UM-DAVAO',W/2,H-F+135);
+ x.fillStyle='#64748B';x.font='400 24px Inter,sans-serif';x.fillText(new Date().toLocaleString(),W/2,H-F+175)}
+const blob=()=>new Promise(r=>$('#strip').toBlob(r,'image/png'));
+async function archive(){const b=await blob();await idb('readwrite',s=>s.put({id:S.id||'s'+Date.now(),t:Date.now(),n:S.n,blob:b}));return b}
+function save(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name||`icpep-photostrip-${Date.now()}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+
+/* review actions */
+function retake(){S.shots=[];go(S.mode==='cam'?'camera':'upload')}
+$('#dl').onclick=async()=>{save(await archive());toast('Downloaded & saved to gallery')};
+$('#pr').onclick=async()=>{const b=await archive();const r=new FileReader();r.onload=()=>{$('#printimg').src=r.result;setTimeout(()=>print(),200)};r.readAsDataURL(b)};
+$('#sh').onclick=async()=>{const b=await archive(),f=new File([b],'photostrip.png',{type:'image/png'});
+ if(navigator.canShare&&navigator.canShare({files:[f]}))try{await navigator.share({files:[f],title:'ICPEP.SE Photostrip'})}catch(e){}else{save(b);toast('Sharing not supported here — downloaded instead')}};
+async function sendMail(to,b,subj){const data=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(b)});
+ await fetch(MAIL_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({key:MAIL_KEY,to,subject:subj||'Your ICPEP.SE Photostrip',body:'Thanks for visiting the ICPEP.SE UM-Davao booth! Your photostrip is attached.',filename:'photostrip.png',data})})}
+$('#mail').onsubmit=async e=>{e.preventDefault();const em=e.target.querySelector('input').value.trim(),b=await archive();
+ if(MAIL_ENDPOINT){try{await sendMail(em,b);toast('Sent to '+em)}catch(x){save(b);toast('Send failed — downloaded instead')}}
+ else{save(b);toast('Email not set up yet — downloaded instead')}};
+$('#finish').onclick=async()=>{const b=await archive(),em=$('#mail input').value.trim();let m='Saved to this booth\'s gallery';
+ if(MAIL_ENDPOINT){try{await sendMail(ARCHIVE+(em?','+em:''),b,'ICPEP.SE PhotoBooth archive');m='Sent to '+ARCHIVE+(em?' and '+em:'')}catch(x){m='Saved locally — email failed'}}else m='Saved locally — email not set up yet';
+ $('#donep').textContent=m;$('#done').hidden=false;setTimeout(()=>{$('#done').hidden=true;S.shots=[];$('#mail input').value='';go('home')},2600)};
+
+/* gallery (IndexedDB) */
+const dbp=new Promise((res,rej)=>{const r=indexedDB.open('icpep-booth',1);r.onupgradeneeded=()=>r.result.createObjectStore('s',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function idb(mode,fn){const d=await dbp;return new Promise((res,rej)=>{const t=d.transaction('s',mode),q=fn(t.objectStore('s'));t.oncomplete=()=>res(q&&q.result);t.onerror=()=>rej(t.error)})}
+async function loadGallery(){const all=((await idb('readonly',s=>s.getAll()))||[]).sort((a,b)=>b.t-a.t),g=$('#gal');g.innerHTML='';$('#galempty').hidden=all.length>0;
+ all.forEach(r=>{const u=URL.createObjectURL(r.blob),d=document.createElement('div');d.className='card';
+ d.innerHTML=`<img src="${u}"><div class="mut" style="font-size:11px">${new Date(r.t).toLocaleString()}</div><div class="row"><button class="btn sm">Download</button><button class="btn s sm">Delete</button></div>`;
+ const [a,b]=d.querySelectorAll('button');a.onclick=()=>save(r.blob);b.onclick=async()=>{await idb('readwrite',s=>s.delete(r.id));loadGallery()};g.append(d)})}
+$('#clrg').onclick=async()=>{if(confirm('Delete all saved strips?')){await idb('readwrite',s=>s.clear());loadGallery()}};
+
+/* keyboard */
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;const v=location.hash.slice(1)||'home';
+ if(e.code==='Space'){e.preventDefault();if(v==='home')begin('up');else if(v==='camera')snap()}
+ if(e.code==='Escape'&&S.busy){S.cancel=true;$('#cd').hidden=true}});
+route();
+</script></body></html>
